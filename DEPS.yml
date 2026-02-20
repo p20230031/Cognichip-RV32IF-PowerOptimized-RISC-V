@@ -1,0 +1,285 @@
+# DEPS.yml for RV32F RISC-V Processor Simulation
+# Defines compilation dependencies and simulation targets
+
+# ===== FP Extension Modules =====
+fp_regfile:
+  deps:
+    - FP_REGFILE.v
+
+fp_alu:
+  deps:
+    - FP_ALU.v
+
+fp_control:
+  deps:
+    - FP_CONTROL_UNIT.v
+
+fp_execute:
+  deps:
+    - FP_ALU.v
+    - FP_EXECUTE_STAGE.v
+
+fp_forwarding:
+  deps:
+    - FP_FORWARDING_UNIT.v
+    - FP_FORWARDING_MUXES.v
+
+fp_csr:
+  deps:
+    - FP_CSR.v
+
+# ===== Integer/Base Modules =====
+alu_modules:
+  deps:
+    - ALU.v
+    - ALU_CONTROL.v
+
+control_units:
+  deps:
+    - CONTROL_UNIT.v
+    - BRANCH_CONDITION_CHECKER.v
+
+forwarding:
+  deps:
+    - FORWARDING_UNIT.v
+    - FORWARDING_MUXES.v
+
+muxes:
+  deps:
+    - MUX_3_TO_1.v
+    - PC_MUX.v
+    - stalling_mux.v
+
+register_files:
+  deps:
+    - REGFILE.v
+
+# ===== Stage Modules =====
+fetch_stage:
+  deps:
+    - "INSTRUCTION MEMORY.v"
+    - jump_detector.v
+    - PC_MUX.v
+    - INSTRUCTION_FETCH.v
+
+decode_stage:
+  deps:
+    - REGFILE.v
+    - CONTROL_UNIT.v
+    - SIGN_EXTEND.v
+    - stalling_mux.v
+    - DECODE.v
+
+execute_stage:
+  deps:
+    - ALU.v
+    - ALU_CONTROL.v
+    - BRANCH_CONDITION_CHECKER.v
+    - MUX_3_TO_1.v
+    - EXECUTE_STAGE.v
+
+memory_stage:
+  deps:
+    - MEM_STAGE.v
+
+# ===== Pipeline Registers =====
+pipeline_regs:
+  deps:
+    - IF_ID.v
+    - ID_EX.v
+    - EX_MEM.v
+    - MEM_WB.v
+
+# ===== Processor Top Module (Complete Design) =====
+rv32f_processor:
+  deps:
+    # FP modules
+    - FP_REGFILE.v
+    - FP_ALU.v
+    - FP_CONTROL_UNIT.v
+    - FP_EXECUTE_STAGE.v
+    - FP_FORWARDING_UNIT.v
+    - FP_FORWARDING_MUXES.v
+    - FP_CSR.v
+    # Integer modules
+    - ALU.v
+    - ALU_CONTROL.v
+    - CONTROL_UNIT.v
+    - BRANCH_CONDITION_CHECKER.v
+    - FORWARDING_UNIT.v
+    - FORWARDING_MUXES.v
+    - MUX_3_TO_1.v
+    - PC_MUX.v
+    - stalling_mux.v
+    - REGFILE.v
+    # Stage modules
+    - "INSTRUCTION MEMORY.v"
+    - jump_detector.v
+    - INSTRUCTION_FETCH.v
+    - SIGN_EXTEND.v
+    - DECODE.v
+    - EXECUTE_STAGE.v
+    - MEM_STAGE.v
+    # Pipeline registers
+    - IF_ID.v
+    - ID_EX.v
+    - EX_MEM.v
+    - MEM_WB.v
+    # Stalling unit
+    - "STALLING UNIT.v"
+    # Top module
+    - RISC_V_RV32F_PROCESSOR.v
+  top: RISC_V_RV32F_PROCESSOR
+
+# ===== Simple FP ALU Test (for debugging) =====
+sim_fp_alu_simple:
+  deps:
+    - FP_ALU.v
+    - tb_FP_ALU_simple.v
+  top: tb_FP_ALU_simple
+
+# ===== Simulation Target (Uses Functional FP_ALU) =====
+sim_rv32f:
+  deps:
+    # All design files (reference the processor target)
+    - FP_REGFILE.v
+    - FP_ALU.v  # Functional model for simulation
+    - FP_CONTROL_UNIT.v
+    - FP_EXECUTE_STAGE.v
+    - FP_FORWARDING_UNIT.v
+    - FP_FORWARDING_MUXES.v
+    - FP_CSR.v
+    - ALU.v
+    - ALU_CONTROL.v
+    - CONTROL_UNIT.v
+    - BRANCH_CONDITION_CHECKER.v
+    - FORWARDING_UNIT.v
+    - FORWARDING_MUXES.v
+    - MUX_3_TO_1.v
+    - PC_MUX.v
+    - stalling_mux.v
+    - REGFILE.v
+    - "INSTRUCTION MEMORY.v"
+    - jump_detector.v
+    - INSTRUCTION_FETCH.v
+    - SIGN_EXTEND.v
+    - DECODE.v
+    - EXECUTE_STAGE.v
+    - MEM_STAGE.v
+    - IF_ID.v
+    - ID_EX.v
+    - EX_MEM.v
+    - MEM_WB.v
+    - "STALLING UNIT.v"
+    - RISC_V_RV32F_PROCESSOR.v
+    # Testbench
+    - tb_RISC_V_RV32F_PROCESSOR.v
+  top: tb_RISC_V_RV32F_PROCESSOR
+
+# ===== Synthesis Target (Uses Synthesizable FP_ALU) =====
+synth_rv32f:
+  deps:
+    # All design files with synthesizable FP_ALU
+    - FP_REGFILE.v
+    - FP_ALU_SYNTH.v              # Synthesizable placeholder/IP wrapper
+    - FP_CONTROL_UNIT.v
+    - FP_EXECUTE_STAGE_SYNTH.v    # Synthesis version of FP execute stage
+    - FP_FORWARDING_UNIT.v
+    - FP_FORWARDING_MUXES.v
+    - FP_CSR.v
+    - ALU.v
+    - ALU_CONTROL.v
+    - CONTROL_UNIT.v
+    - BRANCH_CONDITION_CHECKER.v
+    - FORWARDING_UNIT.v
+    - FORWARDING_MUXES.v
+    - MUX_3_TO_1.v
+    - PC_MUX.v
+    - stalling_mux.v
+    - REGFILE.v
+    - "INSTRUCTION MEMORY.v"
+    - jump_detector.v
+    - INSTRUCTION_FETCH.v
+    - SIGN_EXTEND.v
+    - DECODE.v
+    - EXECUTE_STAGE.v
+    - MEM_STAGE.v
+    - IF_ID.v
+    - ID_EX.v
+    - EX_MEM.v
+    - MEM_WB.v
+    - "STALLING UNIT.v"
+    - RISC_V_RV32F_PROCESSOR_SYNTH.v  # Synthesis top module
+  top: RISC_V_RV32F_PROCESSOR_SYNTH
+
+# ===== Power-Optimized Simulation Target =====
+sim_rv32f_power_opt:
+  deps:
+    - FP_REGFILE_POWER_OPT.v
+    - FP_ALU.v  # Functional model for simulation
+    - FP_CONTROL_UNIT.v
+    - FP_EXECUTE_STAGE_POWER_OPT.v
+    - FP_FORWARDING_UNIT.v
+    - FP_FORWARDING_MUXES.v
+    - FP_CSR.v
+    - ALU.v
+    - ALU_CONTROL.v
+    - CONTROL_UNIT.v
+    - BRANCH_CONDITION_CHECKER.v
+    - FORWARDING_UNIT.v
+    - FORWARDING_MUXES.v
+    - MUX_3_TO_1.v
+    - PC_MUX.v
+    - stalling_mux.v
+    - REGFILE.v
+    - INSTRUCTION_MEMORY_POWER_OPT.v
+    - jump_detector.v
+    - INSTRUCTION_FETCH_POWER_OPT.v
+    - SIGN_EXTEND.v
+    - DECODE.v
+    - EXECUTE_STAGE.v
+    - MEM_STAGE.v
+    - IF_ID.v
+    - ID_EX.v
+    - EX_MEM.v
+    - MEM_WB.v
+    - "STALLING UNIT.v"
+    - RISC_V_RV32F_PROCESSOR_POWER_OPT.v
+    - tb_RISC_V_RV32F_PROCESSOR.v
+  top: tb_RISC_V_RV32F_PROCESSOR
+
+# ===== Debug Testbench (Detailed Trace) =====
+sim_fp_debug:
+  deps:
+    - FP_REGFILE.v
+    - FP_ALU.v  # Functional model for simulation
+    - FP_CONTROL_UNIT.v
+    - FP_EXECUTE_STAGE.v
+    - FP_FORWARDING_UNIT.v
+    - FP_FORWARDING_MUXES.v
+    - FP_CSR.v
+    - ALU.v
+    - ALU_CONTROL.v
+    - CONTROL_UNIT.v
+    - BRANCH_CONDITION_CHECKER.v
+    - FORWARDING_UNIT.v
+    - FORWARDING_MUXES.v
+    - MUX_3_TO_1.v
+    - PC_MUX.v
+    - stalling_mux.v
+    - REGFILE.v
+    - "INSTRUCTION MEMORY.v"
+    - jump_detector.v
+    - INSTRUCTION_FETCH.v
+    - SIGN_EXTEND.v
+    - DECODE.v
+    - EXECUTE_STAGE.v
+    - MEM_STAGE.v
+    - IF_ID.v
+    - ID_EX.v
+    - EX_MEM.v
+    - MEM_WB.v
+    - "STALLING UNIT.v"
+    - RISC_V_RV32F_PROCESSOR.v
+    - tb_FP_DEBUG.v
+  top: tb_FP_DEBUG
